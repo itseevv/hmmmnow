@@ -21,10 +21,9 @@ export default function Home({ onPanic, onAdd }: Props) {
 
   return (
     <div className="flex flex-col items-center min-h-dvh px-6 text-center">
-      <div className="pt-16 pb-4">
-        <h1 className="text-4xl font-bold tracking-tight mb-3">HmmmNow</h1>
-        <p className="text-xl text-gray-700 mb-2">在伦敦，突然 Hmmmm？</p>
-        <p className="text-base text-gray-500">看看附近的💩点</p>
+      <div className="pt-16 pb-6">
+        <h1 className="text-4xl font-bold tracking-tight mb-4">HmmmNow</h1>
+        <p className="text-lg text-gray-600">伦敦厕所侠の智慧集锦🫶</p>
       </div>
 
       <div className="text-[120px] leading-none py-8 animate-[float_3s_ease-in-out_infinite]">🚽</div>
