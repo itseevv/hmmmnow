@@ -1,22 +1,34 @@
+import { useEffect, useState } from "react";
+import { supabase, hasSupabase } from "../lib/supabase";
+import { mockToilets } from "../data/mockToilets";
+
 type Props = {
   onPanic: () => void;
   onAdd: () => void;
 };
 
 export default function Home({ onPanic, onAdd }: Props) {
+  const [activeCount, setActiveCount] = useState(mockToilets.length);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (!hasSupabase || !supabase) return;
+    supabase.from("toilets").select("id", { count: "exact", head: true }).eq("is_active", true)
+      .then(({ count }) => { if (count != null) setActiveCount(count); });
+    supabase.from("pending_toilets").select("id", { count: "exact", head: true })
+      .then(({ count }) => { if (count != null) setPendingCount(count); });
+  }, []);
+
   return (
     <div className="flex flex-col items-center min-h-dvh px-6 text-center">
-      {/* Top section */}
       <div className="pt-16 pb-4">
         <h1 className="text-4xl font-bold tracking-tight mb-3">HmmmNow</h1>
         <p className="text-xl text-gray-700 mb-2">在伦敦，突然 Hmmmm？</p>
         <p className="text-base text-gray-500">看看附近的💩点</p>
       </div>
 
-      {/* Hero */}
       <div className="text-[120px] leading-none py-8 animate-[float_3s_ease-in-out_infinite]">🚽</div>
 
-      {/* CTA section */}
       <div className="w-full flex flex-col items-center pt-4 pb-2">
         <button
           onClick={onPanic}
@@ -32,10 +44,12 @@ export default function Home({ onPanic, onAdd }: Props) {
           ➕ 我也知道一个
         </button>
 
-        <p className="text-xs text-gray-400">已收录 42 个救命地点</p>
+        <p className="text-xs text-gray-400">已收录 {activeCount} 个救命地点</p>
+        {pendingCount > 0 && (
+          <p className="text-xs text-gray-300 mt-1">收到 {pendingCount} 个民间线索</p>
+        )}
       </div>
 
-      {/* Footer disclaimer */}
       <p className="mt-auto pt-6 pb-6 text-[10px] text-gray-300">
         厕所信息可能会变。请友好使用，别为难 staff。
       </p>

@@ -54,6 +54,8 @@ create table pending_toilets (
   tip text,
   hmmm_note text,
   extra_note text,
+  lat double precision,
+  lng double precision,
   created_at timestamp with time zone default now()
 );
 ```

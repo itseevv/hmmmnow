@@ -13,9 +13,21 @@ export default function AddLooForm({ onBack }: Props) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [locStatus, setLocStatus] = useState<"idle" | "done" | "denied">("idle");
 
   const set = (key: keyof PendingToiletInput, val: string) =>
     setForm((f) => ({ ...f, [key]: val }));
+
+  const captureLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setForm((f) => ({ ...f, lat: pos.coords.latitude, lng: pos.coords.longitude }));
+        setLocStatus("done");
+      },
+      () => setLocStatus("denied"),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleSubmit = async () => {
     setError("");
@@ -58,7 +70,7 @@ export default function AddLooForm({ onBack }: Props) {
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
         <div className="text-5xl mb-6">🙏</div>
         <p className="text-lg font-semibold text-gray-700 mb-2">
-          收到。下一个在伦敦街头 hmmmmm 的人会感谢你！
+          收到。等我们确认一下，它就能加入救命地图。
         </p>
         <button
           onClick={onBack}
@@ -107,6 +119,24 @@ export default function AddLooForm({ onBack }: Props) {
         )}
         <TextArea label="位置或进入小提示" value={form.tip ?? ""} onChange={(v) => set("tip", v)} />
         <TextArea label="补充说明" value={form.extra_note ?? ""} onChange={(v) => set("extra_note", v)} />
+
+        <div>
+          {locStatus === "idle" && (
+            <button
+              type="button"
+              onClick={captureLocation}
+              className="text-sm text-blue-500 font-medium"
+            >
+              📍 用我现在的位置作为坐标
+            </button>
+          )}
+          {locStatus === "done" && (
+            <p className="text-sm text-green-600">✓ 已记录当前位置</p>
+          )}
+          {locStatus === "denied" && (
+            <p className="text-sm text-gray-400">没关系，也可以只提交文字线索</p>
+          )}
+        </div>
       </div>
 
       {error && <p className="text-red-500 text-sm mt-4">{error}</p>}

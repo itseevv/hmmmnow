@@ -6,6 +6,8 @@ ALTER TABLE toilets ADD COLUMN IF NOT EXISTS tip text;
 
 ALTER TABLE pending_toilets ADD COLUMN IF NOT EXISTS code text;
 ALTER TABLE pending_toilets ADD COLUMN IF NOT EXISTS tip text;
+ALTER TABLE pending_toilets ADD COLUMN IF NOT EXISTS lat double precision;
+ALTER TABLE pending_toilets ADD COLUMN IF NOT EXISTS lng double precision;
 
 -- HmmmNow seed data: 42 London toilet records
 -- Run this in the Supabase SQL Editor after creating the toilets table.

@@ -27,6 +27,8 @@ export type PendingToiletInput = {
   code?: string;
   tip?: string;
   extra_note?: string;
+  lat?: number;
+  lng?: number;
 };
 
 export type ViewState = "home" | "panic" | "add";
