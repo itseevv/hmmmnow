@@ -15,8 +15,8 @@ export default function Home({ onPanic, onAdd }: Props) {
     if (!hasSupabase || !supabase) return;
     supabase.from("toilets").select("id", { count: "exact", head: true }).eq("is_active", true)
       .then(({ count }) => { if (count != null) setActiveCount(count); });
-    supabase.from("pending_toilets").select("id", { count: "exact", head: true })
-      .then(({ count }) => { if (count != null) setPendingCount(count); });
+    supabase.rpc("get_pending_toilets_count")
+      .then(({ data }) => { if (typeof data === "number" && data > 0) setPendingCount(data); });
   }, []);
 
   return (
