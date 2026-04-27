@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#F3EEE7"/>
+  <!-- Roll body -->
+  <ellipse cx="256" cy="270" rx="100" ry="110" fill="#fff" stroke="#E0D8CE" stroke-width="6"/>
+  <!-- Roll hole -->
+  <ellipse cx="256" cy="270" rx="36" ry="40" fill="#F3EEE7" stroke="#E0D8CE" stroke-width="4"/>
+  <!-- Paper tail -->
+  <path d="M356 270 Q370 270 375 290 Q380 320 360 340 L340 340 Q355 320 352 295 Q350 278 356 270Z" fill="#fff" stroke="#E0D8CE" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Red accent stripe -->
+  <rect x="206" y="148" width="100" height="14" rx="7" fill="#EF4444"/>
+</svg>
