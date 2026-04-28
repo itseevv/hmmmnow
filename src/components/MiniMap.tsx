@@ -12,20 +12,14 @@ type Props = {
 };
 
 const toiletIcon = L.divIcon({
-  html: "🚻",
-  className: "text-2xl",
-  iconSize: [28, 28],
-  iconAnchor: [14, 14],
+  html: '<div class="toilet-paper-marker">🧻</div>',
+  className: "",
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -14],
 });
 
-const starIcon = L.divIcon({
-  html: "⭐",
-  className: "text-2xl",
-  iconSize: [28, 28],
-  iconAnchor: [14, 14],
-});
-
-export default function MiniMap({ allToilets, bestId, userLat, userLng }: Props) {
+export default function MiniMap({ allToilets, userLat, userLng }: Props) {
   const center: [number, number] = userLat && userLng
     ? [userLat, userLng]
     : [51.5074, -0.1278];
@@ -48,12 +42,10 @@ export default function MiniMap({ allToilets, bestId, userLat, userLng }: Props)
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {allToilets.map((t) => {
-            const isBest = t.id === bestId;
-            const icon = isBest ? starIcon : toiletIcon;
             const showCode = t.access_type === "需要 code" && t.code;
 
             return (
-              <Marker key={t.id} position={[t.lat, t.lng]} icon={icon}>
+              <Marker key={t.id} position={[t.lat, t.lng]} icon={toiletIcon}>
                 <Popup>
                   <div className="text-sm">
                     <p className="font-bold">{t.name}</p>
