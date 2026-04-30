@@ -9,7 +9,7 @@ type Props = {
 const accessOptions = ["免费可进", "问店员", "需要消费", "需要 code", "不太确定"];
 
 export default function AddLooForm({ onBack }: Props) {
-  const [form, setForm] = useState<PendingToiletInput>({ name: "" });
+  const [form, setForm] = useState<PendingToiletInput>({ name: "", is_anonymous: false });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -44,12 +44,21 @@ export default function AddLooForm({ onBack }: Props) {
       setError("再多给一点线索吧，不然我们也找不到它。");
       return;
     }
+    if (form.is_anonymous === false && !form.submitter_name?.trim()) {
+      setError("不想留名的话，可以选择匿名提交");
+      return;
+    }
 
     setSubmitting(true);
     try {
       const payload = { ...form };
       if (payload.access_type !== "需要 code") {
         delete payload.code;
+      }
+      if (payload.is_anonymous) {
+        payload.submitter_name = null;
+      } else {
+        payload.submitter_name = payload.submitter_name?.trim() || null;
       }
       if (hasSupabase && supabase) {
         const { error: dbErr } = await supabase
@@ -69,12 +78,16 @@ export default function AddLooForm({ onBack }: Props) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
         <div className="text-5xl mb-6">🙏</div>
-        <p className="text-lg font-semibold text-gray-700 mb-2">
+        <p
+          className="text-lg font-bold mb-2"
+          style={{ color: "var(--ink)" }}
+        >
           收到。等我们确认一下，它就能加入救命地图。
         </p>
         <button
           onClick={onBack}
-          className="mt-6 text-sm text-gray-400 underline"
+          className="mt-6 text-sm underline"
+          style={{ color: "var(--soft)" }}
         >
           回首页
         </button>
@@ -84,11 +97,19 @@ export default function AddLooForm({ onBack }: Props) {
 
   return (
     <div className="px-4 py-6">
-      <button onClick={onBack} className="text-sm text-gray-400 mb-4 inline-block">
+      <button
+        onClick={onBack}
+        className="text-sm mb-4 inline-block"
+        style={{ color: "var(--soft)" }}
+      >
         ← 回首页
       </button>
-      <h2 className="text-xl font-bold text-gray-800 mb-1">你也知道一个？</h2>
-      <p className="text-sm text-gray-400 mb-6">救人一急，功德 +1。</p>
+      <h2 className="text-2xl font-extrabold mb-1" style={{ color: "var(--ink)" }}>
+        你也知道一处宝地？
+      </h2>
+      <p className="text-sm mb-6" style={{ color: "var(--soft)" }}>
+        救人一急，功德 +1。
+      </p>
 
       <div className="space-y-4">
         <Field label="地点名 *" value={form.name} onChange={(v) => set("name", v)} />
@@ -98,11 +119,17 @@ export default function AddLooForm({ onBack }: Props) {
           onChange={(v) => set("area_or_address", v)}
         />
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">进入方式</label>
+          <label
+            className="block text-xs font-extrabold uppercase tracking-wider mb-1"
+            style={{ color: "var(--soft)" }}
+          >
+            进入方式
+          </label>
           <select
             value={form.access_type ?? ""}
             onChange={(e) => set("access_type", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white"
+            className="w-full border-2 rounded-xl px-4 py-3 text-sm bg-white"
+            style={{ borderColor: "#ece1cd", color: "var(--ink)" }}
           >
             <option value="">选一个</option>
             {accessOptions.map((o) => (
@@ -125,17 +152,64 @@ export default function AddLooForm({ onBack }: Props) {
             <button
               type="button"
               onClick={captureLocation}
-              className="text-sm text-blue-500 font-medium"
+              className="text-sm font-bold"
+              style={{ color: "var(--blue)" }}
             >
               📍 用我现在的位置作为坐标
             </button>
           )}
           {locStatus === "done" && (
-            <p className="text-sm text-green-600">✓ 已记录当前位置</p>
+            <p className="text-sm font-bold" style={{ color: "var(--mint-deep)" }}>
+              ✓ 已记录当前位置
+            </p>
           )}
           {locStatus === "denied" && (
-            <p className="text-sm text-gray-400">没关系，也可以只提交文字线索</p>
+            <p className="text-sm" style={{ color: "var(--soft)" }}>
+              没关系，也可以只提交文字线索
+            </p>
           )}
+        </div>
+
+        <div
+          className="rounded-2xl p-4 border-2 border-dashed"
+          style={{ background: "var(--parchment)", borderColor: "#d8c8a8" }}
+        >
+          <p className="text-sm font-extrabold mb-1" style={{ color: "var(--ink)" }}>
+            留个名吗？
+          </p>
+          <p className="text-xs mb-3" style={{ color: "var(--soft)" }}>
+            上榜的时候会显示这个名字。
+          </p>
+          {!form.is_anonymous && (
+            <div className="mb-3">
+              <label
+                className="block text-xs font-extrabold uppercase tracking-wider mb-1"
+                style={{ color: "var(--soft)" }}
+              >
+                尊姓大名
+              </label>
+              <input
+                type="text"
+                maxLength={15}
+                value={form.submitter_name ?? ""}
+                onChange={(e) => set("submitter_name", e.target.value)}
+                placeholder="最多 15 个字"
+                className="w-full border-2 rounded-xl px-4 py-3 text-sm bg-white"
+                style={{ borderColor: "#ece1cd", color: "var(--ink)" }}
+              />
+            </div>
+          )}
+          <label className="flex items-center gap-2 text-sm" style={{ color: "var(--ink)" }}>
+            <input
+              type="checkbox"
+              checked={form.is_anonymous === true}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, is_anonymous: e.target.checked }))
+              }
+              className="w-4 h-4"
+            />
+            匿名提交
+          </label>
         </div>
       </div>
 
@@ -144,7 +218,11 @@ export default function AddLooForm({ onBack }: Props) {
       <button
         onClick={handleSubmit}
         disabled={submitting}
-        className="w-full mt-6 bg-green-500 hover:bg-green-600 active:scale-95 disabled:opacity-50 text-white font-semibold py-4 rounded-xl transition-all"
+        className="w-full mt-6 active:scale-95 disabled:opacity-50 text-white font-extrabold py-4 rounded-2xl transition-all"
+        style={{
+          background: "var(--mint-deep)",
+          boxShadow: "0 4px 0 #3f6849",
+        }}
       >
         {submitting ? "提交中……" : "提交这个救命地点"}
       </button>
@@ -155,12 +233,18 @@ export default function AddLooForm({ onBack }: Props) {
 function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+      <label
+        className="block text-xs font-extrabold uppercase tracking-wider mb-1"
+        style={{ color: "var(--soft)" }}
+      >
+        {label}
+      </label>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm"
+        className="w-full border-2 rounded-xl px-4 py-3 text-sm bg-white"
+        style={{ borderColor: "#ece1cd", color: "var(--ink)" }}
       />
     </div>
   );
@@ -169,12 +253,18 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
 function TextArea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+      <label
+        className="block text-xs font-extrabold uppercase tracking-wider mb-1"
+        style={{ color: "var(--soft)" }}
+      >
+        {label}
+      </label>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={2}
-        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none"
+        className="w-full border-2 rounded-xl px-4 py-3 text-sm resize-none bg-white"
+        style={{ borderColor: "#ece1cd", color: "var(--ink)" }}
       />
     </div>
   );

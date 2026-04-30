@@ -1,6 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import type { Toilet } from "../types";
+import { openDirectionsAndTrack } from "../lib/visits";
+import { getSubmitterLabel } from "../lib/attribution";
 import "leaflet/dist/leaflet.css";
 
 type Props = {
@@ -25,47 +27,52 @@ export default function MiniMap({ allToilets, userLat, userLng }: Props) {
     : [51.5074, -0.1278];
 
   return (
-    <div className="mt-6 px-1">
-      <h3 className="text-base font-semibold text-gray-700 mb-1">附近地图</h3>
-      <p className="text-xs text-gray-400 mb-3">
-        点一下图标，看看能不能救你。
-      </p>
-      <div className="rounded-2xl overflow-hidden shadow-md">
-        <MapContainer
-          center={center}
-          zoom={14}
-          style={{ height: "280px", width: "100%" }}
-          scrollWheelZoom={false}
+    <div className="mt-8 mx-1">
+      <div className="map-frame">
+        <span className="map-plaque">活命图</span>
+        <p
+          className="text-[11px] text-center mt-1.5 mb-2.5"
+          style={{ color: "var(--soft)" }}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://osm.org/copyright">OSM</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {allToilets.map((t) => {
-            const showCode = t.access_type === "需要 code" && t.code;
+          看看有哪些地方可以承接你这泼天的hmmm意
+        </p>
+        <div className="rounded-2xl overflow-hidden">
+          <MapContainer
+            center={center}
+            zoom={14}
+            style={{ height: "260px", width: "100%" }}
+            scrollWheelZoom={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://osm.org/copyright">OSM</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {allToilets.map((t) => {
+              const showCode = t.access_type === "需要 code" && t.code;
 
-            return (
-              <Marker key={t.id} position={[t.lat, t.lng]} icon={toiletIcon}>
-                <Popup>
-                  <div className="text-sm">
-                    <p className="font-bold">{t.name}</p>
-                    <p>{t.access_type}</p>
-                    {showCode && <p>你懂的：{t.code}</p>}
-                    {t.tip && <p>{t.tip}</p>}
-                    <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${t.lat},${t.lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 underline"
-                    >
-                      带我过去
-                    </a>
-                  </div>
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MapContainer>
+              return (
+                <Marker key={t.id} position={[t.lat, t.lng]} icon={toiletIcon}>
+                  <Popup>
+                    <div className="text-sm">
+                      <p className="font-bold">{t.name}</p>
+                      <p>{t.access_type}</p>
+                      {showCode && <p>你懂的：{t.code}</p>}
+                      {t.tip && <p>{t.tip}</p>}
+                      <button
+                        type="button"
+                        onClick={() => openDirectionsAndTrack(t)}
+                        className="text-blue-500 underline bg-transparent border-0 p-0 cursor-pointer"
+                      >
+                        快带朕去
+                      </button>
+                      <p className="text-[10px] text-gray-400 mt-1">{getSubmitterLabel(t)}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </MapContainer>
+        </div>
       </div>
     </div>
   );

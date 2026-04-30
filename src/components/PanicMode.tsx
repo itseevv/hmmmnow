@@ -55,7 +55,8 @@ export default function PanicMode({ onBack, onAdd }: Props) {
     <div className="px-4 py-6">
       <button
         onClick={onBack}
-        className="text-sm text-gray-400 mb-4 inline-block"
+        className="text-sm mb-4 inline-block"
+        style={{ color: "var(--soft)" }}
       >
         ← 回首页
       </button>
@@ -67,12 +68,21 @@ export default function PanicMode({ onBack, onAdd }: Props) {
 
       {status === "results" && (
         <>
-          <h2 className="text-xl font-bold text-gray-800 mb-1">
-            附近最有希望的 3 个
-          </h2>
-          <p className="text-sm text-gray-400 mb-5">
-            按你当前位置粗略排序，先救急，别太纠结。
-          </p>
+          <div className="text-center mb-5">
+            <span
+              className="inline-block text-xl font-extrabold px-4 py-1.5 rounded-xl bg-white"
+              style={{
+                border: "2px solid var(--ink)",
+                boxShadow: "4px 4px 0 var(--ink)",
+                transform: "rotate(-1deg)",
+              }}
+            >
+              离你最近的 3 条活路
+            </span>
+            <p className="text-sm mt-3" style={{ color: "var(--soft)" }}>
+              按你当前位置排的，冲了再说！
+            </p>
+          </div>
           {nearest.map((t, i) => (
             <ToiletCard key={t.id} toilet={t} rank={i} />
           ))}

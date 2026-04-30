@@ -5,9 +5,10 @@ import { mockToilets } from "../data/mockToilets";
 type Props = {
   onPanic: () => void;
   onAdd: () => void;
+  onLeaderboard: () => void;
 };
 
-export default function Home({ onPanic, onAdd }: Props) {
+export default function Home({ onPanic, onAdd, onLeaderboard }: Props) {
   const [activeCount, setActiveCount] = useState(mockToilets.length);
   const [pendingCount, setPendingCount] = useState(0);
 
@@ -20,36 +21,100 @@ export default function Home({ onPanic, onAdd }: Props) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center min-h-dvh px-6 text-center">
-      <div className="pt-16 pb-6">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">HmmmNow</h1>
-        <p className="text-lg text-gray-600">伦敦厕所侠の智慧集锦🫶</p>
+    <div className="flex flex-col items-center min-h-dvh px-6 pb-6 text-center">
+      <div className="pt-14">
+        <h1 className="text-[40px] font-black tracking-tight mb-5 whitespace-nowrap">
+          Hmmm
+          <span
+            className="inline-block align-baseline ml-1 px-3.5 py-0.5 text-white rounded-full"
+            style={{
+              background: "var(--coral)",
+              transform: "rotate(-4deg)",
+              letterSpacing: "0.02em",
+              boxShadow:
+                "0 4px 0 var(--coral-deep), 0 8px 18px -6px rgba(255,90,77,0.45)",
+            }}
+          >
+            NOW
+          </span>
+        </h1>
+        <p className="text-base" style={{ color: "var(--soft)" }}>
+          伦敦厕所侠の智慧集锦🫶
+        </p>
       </div>
 
-      <div className="text-[120px] leading-none py-8 animate-[float_3s_ease-in-out_infinite]">🚽</div>
+      <div
+        className="text-[170px] leading-none mt-12 mb-12"
+        style={{
+          animation: "float 3s ease-in-out infinite",
+          filter: "drop-shadow(0 12px 0 #f0e0c8)",
+        }}
+      >
+        🚽
+      </div>
 
-      <div className="w-full flex flex-col items-center pt-4 pb-2">
+      <div className="w-full flex flex-col items-center">
         <button
           onClick={onPanic}
-          className="w-full max-w-xs bg-red-500 hover:bg-red-600 active:scale-95 text-white text-xl font-bold py-5 px-8 rounded-full shadow-lg transition-all mb-4"
+          className="panic-shadow w-full max-w-xs text-white text-xl font-extrabold py-5 px-8 rounded-full mb-5 transition-all"
+          style={{
+            background: "var(--coral)",
+            animation: "wiggle 4s ease-in-out infinite",
+          }}
         >
           🚨 快憋不住啦！
         </button>
 
         <button
           onClick={onAdd}
-          className="w-full max-w-xs bg-white hover:bg-gray-50 text-gray-700 text-base font-medium py-3 px-6 rounded-full shadow border border-gray-200 transition-all mb-4"
+          className="parchment-shadow w-full max-w-xs text-base font-semibold py-3 px-6 rounded-full mb-7 transition-all border-2 border-dashed"
+          style={{
+            background: "var(--parchment)",
+            color: "var(--ink)",
+            borderColor: "#d8c8a8",
+          }}
         >
-          ➕ 我也知道一个
+          ➕ 我也知道一处宝地
         </button>
 
-        <p className="text-xs text-gray-400">已收录 {activeCount} 个救命地点</p>
+        <p className="text-xs" style={{ color: "var(--soft)" }}>
+          已收录 {activeCount} 个救命地点
+        </p>
         {pendingCount > 0 && (
-          <p className="text-xs text-gray-300 mt-1">收到 {pendingCount} 个民间线索</p>
+          <p className="text-xs mt-1" style={{ color: "#b9ad99" }}>
+            收到 {pendingCount} 个民间线索
+          </p>
         )}
       </div>
 
-      <p className="mt-auto pt-6 pb-6 text-[10px] text-gray-300">
+      <button
+        onClick={onLeaderboard}
+        className="relative mt-12 inline-flex items-center gap-2 active:scale-95 transition-all text-sm font-extrabold px-5 py-2.5 rounded-full"
+        style={{
+          background: "linear-gradient(160deg, #fff5d4, #f4dc94)",
+          color: "#6b4f1a",
+          border: "2px dashed var(--gold)",
+          transform: "rotate(-3deg)",
+          boxShadow:
+            "0 6px 0 rgba(168, 120, 34, 0.25), 0 14px 28px -10px rgba(168, 120, 34, 0.35)",
+        }}
+      >
+        <span className="text-base">🏆</span>
+        <span>厕所功德榜</span>
+        <span className="text-base">🛕</span>
+        <span
+          className="absolute text-lg"
+          style={{
+            top: "-10px",
+            right: "-8px",
+            animation: "spark 2.4s ease-in-out infinite",
+          }}
+        >
+          ✨
+        </span>
+      </button>
+
+      <p className="mt-12 text-[10px]" style={{ color: "#c8baa3" }}>
         厕所信息可能会变。请友好使用，别为难 staff。
       </p>
     </div>
